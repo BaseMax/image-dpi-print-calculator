@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image DPI Print Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .container {
+            max-width: 1152px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        h4 {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .bg-white {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .text-gray-600 {
+            color: #4b5563;
+        }
+        
+        .text-gray-700 {
+            color: #374151;
+        }
+        
+        .text-gray-800 {
+            color: #1f2937;
+        }
+        
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            background: #f9fafb;
+            padding: 3rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 16rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-area:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .upload-icon {
+            width: 3rem;
+            height: 3rem;
+            margin-bottom: 1rem;
+            color: #9ca3af;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        @media (max-width: 768px) {
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border-top: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .border-blue {
+            border-top-color: #3b82f6;
+        }
+        
+        .border-green {
+            border-top-color: #10b981;
+        }
+        
+        .border-purple {
+            border-top-color: #8b5cf6;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-purple {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        
+        .info-section {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .space-y-3 > * + * {
+            margin-top: 0.75rem;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+        }
+        
+        .text-lg {
+            font-size: 1.125rem;
+        }
+        
+        .text-xl {
+            font-size: 1.25rem;
+        }
+        
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .pt-2 {
+            padding-top: 0.5rem;
+        }
+        
+        .border-t {
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .visual-section {
+            margin-top: 2rem;
+        }
+        
+        .visual-box {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .color-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 9999px;
+            margin-right: 0.5rem;
+            display: inline-block;
+        }
+        
+        .dot-blue {
+            background: #3b82f6;
+        }
+        
+        .dot-green {
+            background: #10b981;
+        }
+        
+        .dot-purple {
+            background: #8b5cf6;
+        }
+        
+        .ruler-container {
+            display: flex;
+        }
+        
+        .ruler-container > div:first-child {
+            margin-right: 0.5rem;
+        }
+        
+        .visualization-box {
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .box-blue {
+            background: #eff6ff;
+            border: 2px solid #93c5fd;
+        }
+        
+        .box-green {
+            background: #d1fae5;
+            border: 2px solid #6ee7b7;
+        }
+        
+        .box-purple {
+            background: #f5f3ff;
+            border: 2px solid #c4b5fd;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+        
+        .space-y-8 > * + * {
+            margin-top: 2rem;
+        }
+        
+        label {
+            display: block;
+        }
+        
+        .label-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-subtitle {
+            color: #4b5563;
+            font-size: 1.125rem;
+        }
+    </style>
+    <style>
+        .ruler-horizontal {
+            background: linear-gradient(to right, #374151 0%, #374151 2px, transparent 2px, transparent 10px);
+            background-size: 10px 100%;
+            height: 30px;
+            position: relative;
+        }
+        
+        .ruler-vertical {
+            background: linear-gradient(to bottom, #374151 0%, #374151 2px, transparent 2px, transparent 10px);
+            background-size: 100% 10px;
+            width: 30px;
+            position: relative;
+        }
+        
+        .ruler-mark {
+            position: absolute;
+            background: #1f2937;
+        }
+        
+        .ruler-horizontal .ruler-mark {
+            width: 2px;
+            height: 20px;
+            bottom: 0;
+        }
+        
+        .ruler-vertical .ruler-mark {
+            height: 2px;
+            width: 20px;
+            right: 0;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+        }
+        
+        .result-card {
+            transition: transform 0.2s;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-8">
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Image DPI Print Calculator</h1>
+            <p class="header-subtitle">Upload an image to calculate print dimensions at various DPI settings</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="bg-white">
+            <div class="mb-6">
+                <label for="imageUpload" class="label-text">
+                    Upload Image
+                </label>
+                <div>
+                    <label for="imageUpload" class="upload-area">
+                        <div id="uploadPrompt">
+                            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-600"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-600">PNG, JPG, GIF (MAX. 10MB)</p>
+                        </div>
+                        <img id="imagePreview" class="image-preview hidden" alt="Preview">
+                        <input id="imageUpload" type="file" accept="image/*">
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Image Info -->
+            <div id="imageInfo" class="info-section hidden">
+                <h3 class="mb-2">Image Information</h3>
+                <div class="info-grid">
+                    <div>
+                        <p class="text-sm text-gray-600">File Name:</p>
+                        <p class="text-sm font-medium text-gray-800" id="fileName">-</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">File Size:</p>
+                        <p class="text-sm font-medium text-gray-800" id="fileSize">-</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Dimensions (pixels):</p>
+                        <p class="text-sm font-medium text-gray-800" id="imageDimensions">-</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Aspect Ratio:</p>
+                        <p class="text-sm font-medium text-gray-800" id="aspectRatio">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <h2 class="mb-6">Print Dimensions by DPI</h2>
+            
+            <!-- DPI Results Grid -->
+            <div class="grid grid-cols-3 mb-8">
+                <!-- 72 DPI -->
+                <div class="result-card border-blue">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3>72 DPI</h3>
+                        <span class="badge badge-blue">Screen</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (inches)</p>
+                            <p class="text-2xl font-bold text-gray-800" id="size72">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (cm)</p>
+                            <p class="text-lg font-semibold text-gray-700" id="size72cm">-</p>
+                        </div>
+                        <div class="pt-2 border-t">
+                            <p class="text-xs text-gray-600">Best for: Web display, screen viewing</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 150 DPI -->
+                <div class="result-card border-green">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3>150 DPI</h3>
+                        <span class="badge badge-green">Draft</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (inches)</p>
+                            <p class="text-2xl font-bold text-gray-800" id="size150">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (cm)</p>
+                            <p class="text-lg font-semibold text-gray-700" id="size150cm">-</p>
+                        </div>
+                        <div class="pt-2 border-t">
+                            <p class="text-xs text-gray-600">Best for: Draft prints, proofs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 300 DPI -->
+                <div class="result-card border-purple">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3>300 DPI</h3>
+                        <span class="badge badge-purple">High Quality</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (inches)</p>
+                            <p class="text-2xl font-bold text-gray-800" id="size300">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Print Size (cm)</p>
+                            <p class="text-lg font-semibold text-gray-700" id="size300cm">-</p>
+                        </div>
+                        <div class="pt-2 border-t">
+                            <p class="text-xs text-gray-600">Best for: Professional printing, photos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Ruler Representation -->
+            <div class="bg-white">
+                <h3 class="mb-6">Visual Size Comparison</h3>
+                
+                <div class="space-y-8">
+                    <!-- 72 DPI Visualization -->
+                    <div class="visual-box">
+                        <div class="flex items-center mb-3">
+                            <span class="color-dot dot-blue"></span>
+                            <h4>72 DPI - <span id="label72">-</span></h4>
+                        </div>
+                        <div class="ruler-container">
+                            <div class="ruler-vertical" id="rulerV72"></div>
+                            <div style="flex: 1;">
+                                <div class="ruler-horizontal" id="rulerH72"></div>
+                                <div class="visualization-box box-blue" id="box72" style="height: 150px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 150 DPI Visualization -->
+                    <div class="visual-box">
+                        <div class="flex items-center mb-3">
+                            <span class="color-dot dot-green"></span>
+                            <h4>150 DPI - <span id="label150">-</span></h4>
+                        </div>
+                        <div class="ruler-container">
+                            <div class="ruler-vertical" id="rulerV150"></div>
+                            <div style="flex: 1;">
+                                <div class="ruler-horizontal" id="rulerH150"></div>
+                                <div class="visualization-box box-green" id="box150" style="height: 150px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 300 DPI Visualization -->
+                    <div class="visual-box">
+                        <div class="flex items-center mb-3">
+                            <span class="color-dot dot-purple"></span>
+                            <h4>300 DPI - <span id="label300">-</span></h4>
+                        </div>
+                        <div class="ruler-container">
+                            <div class="ruler-vertical" id="rulerV300"></div>
+                            <div style="flex: 1;">
+                                <div class="ruler-horizontal" id="rulerH300"></div>
+                                <div class="visualization-box box-purple" id="box300" style="height: 150px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const imageInfo = document.getElementById('imageInfo');
+        const resultsSection = document.getElementById('resultsSection');
+
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        function handleImageUpload(file) {
+            // Show file info
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            
+            // Create image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Display preview
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    uploadPrompt.classList.add('hidden');
+                    
+                    // Show image info
+                    imageInfo.classList.remove('hidden');
+                    document.getElementById('imageDimensions').textContent = `${img.width} × ${img.height}`;
+                    document.getElementById('aspectRatio').textContent = calculateAspectRatio(img.width, img.height);
+                    
+                    // Calculate and display results
+                    calculatePrintSizes(img.width, img.height);
+                    resultsSection.classList.remove('hidden');
+                    
+                    // Smooth scroll to results
+                    setTimeout(() => {
+                        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 100);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        function calculateAspectRatio(width, height) {
+            const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+            const divisor = gcd(width, height);
+            return `${width / divisor}:${height / divisor}`;
+        }
+
+        function calculatePrintSizes(widthPx, heightPx) {
+            const dpiValues = [72, 150, 300];
+            
+            dpiValues.forEach(dpi => {
+                // Calculate print size in inches
+                const widthInches = widthPx / dpi;
+                const heightInches = heightPx / dpi;
+                
+                // Calculate print size in cm (1 inch = 2.54 cm)
+                const widthCm = widthInches * 2.54;
+                const heightCm = heightInches * 2.54;
+                
+                // Update display
+                document.getElementById(`size${dpi}`).textContent = 
+                    `${widthInches.toFixed(2)}" × ${heightInches.toFixed(2)}"`;
+                document.getElementById(`size${dpi}cm`).textContent = 
+                    `${widthCm.toFixed(2)} × ${heightCm.toFixed(2)} cm`;
+                
+                // Update visual representation
+                updateVisualRuler(dpi, widthInches, heightInches);
+                document.getElementById(`label${dpi}`).textContent = 
+                    `${widthInches.toFixed(2)}" × ${heightInches.toFixed(2)}"`;
+            });
+        }
+
+        function updateVisualRuler(dpi, widthInches, heightInches) {
+            // Scale factor for visualization (pixels per inch in display)
+            const scale = 50; // 50 pixels = 1 inch in visualization
+            
+            const widthPx = Math.min(widthInches * scale, 600);
+            const heightPx = Math.min(heightInches * scale, 150);
+            
+            // Update box dimensions
+            const box = document.getElementById(`box${dpi}`);
+            box.style.width = widthPx + 'px';
+            box.style.height = heightPx + 'px';
+            
+            // Update ruler dimensions
+            const rulerH = document.getElementById(`rulerH${dpi}`);
+            const rulerV = document.getElementById(`rulerV${dpi}`);
+            rulerH.style.width = widthPx + 'px';
+            rulerV.style.height = heightPx + 'px';
+            
+            // Add inch markers on rulers
+            addRulerMarkers(rulerH, widthInches, scale, 'horizontal');
+            addRulerMarkers(rulerV, heightInches, scale, 'vertical');
+        }
+
+        function addRulerMarkers(ruler, inches, scale, orientation) {
+            // Clear existing markers
+            ruler.innerHTML = '';
+            
+            // Add markers at each inch
+            const maxMarkers = Math.min(Math.ceil(inches), 12); // Limit to 12 inches for display
+            for (let i = 1; i <= maxMarkers; i++) {
+                const marker = document.createElement('div');
+                marker.className = 'ruler-mark';
+                
+                if (orientation === 'horizontal') {
+                    marker.style.left = (i * scale) + 'px';
+                    
+                    // Add number label
+                    const label = document.createElement('span');
+                    label.textContent = i;
+                    label.className = 'absolute text-xs text-gray-600';
+                    label.style.left = (i * scale - 5) + 'px';
+                    label.style.top = '5px';
+                    ruler.appendChild(label);
+                } else {
+                    marker.style.top = (i * scale) + 'px';
+                    
+                    // Add number label
+                    const label = document.createElement('span');
+                    label.textContent = i;
+                    label.className = 'absolute text-xs text-gray-600';
+                    label.style.top = (i * scale - 8) + 'px';
+                    label.style.left = '2px';
+                    ruler.appendChild(label);
+                }
+                
+                ruler.appendChild(marker);
+            }
+        }
+
+        // Drag and drop support
+        const uploadArea = document.querySelector('label[for="imageUpload"]');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            }
+        });
+    </script>
+</body>
+</html>
