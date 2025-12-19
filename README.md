@@ -2,6 +2,8 @@
 
 A web utility that lets users upload an image and calculates print dimensions at multiple DPI (Dots Per Inch) values. The calculator shows results visually with rulers and a beautiful, responsive layout.
 
+![Image DPI Print Calculator](preview.png)
+
 ## Features
 
 - 📤 **Image Upload**: Click to upload or drag and drop images (PNG, JPG, GIF)
